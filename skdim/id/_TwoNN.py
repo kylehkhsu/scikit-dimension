@@ -146,7 +146,8 @@ class TwoNN(GlobalEstimator):
         else:
             # mu = r2/r1 for each data point
             # relatively high dimensional data, use distance matrix generator
-            if X.shape[1] > 25:
+            # if X.shape[1] > 25:
+            if False:
                 distmat_chunks = pairwise_distances_chunked(X)
                 _mu = np.zeros((len(X)))
                 i = 0
