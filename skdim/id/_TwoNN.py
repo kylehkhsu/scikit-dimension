@@ -146,8 +146,8 @@ class TwoNN(GlobalEstimator):
         else:
             # mu = r2/r1 for each data point
             # relatively high dimensional data, use distance matrix generator
-            # if X.shape[1] > 25:
             if False:
+            # if X.shape[1] > 25:
                 distmat_chunks = pairwise_distances_chunked(X)
                 _mu = np.zeros((len(X)))
                 i = 0
@@ -172,12 +172,20 @@ class TwoNN(GlobalEstimator):
 
         # Fit line
         lr = LinearRegression(fit_intercept=False)
-        lr.fit(np.log(mu).reshape(-1, 1), -np.log(1 - Femp).reshape(-1, 1))
+        X = np.log(mu).reshape(-1, 1)
+        y = -np.log(1 - Femp).reshape(-1, 1)
+
+        valid = X != np.inf
+        X = X[valid].reshape(-1, 1)
+        y = y[valid].reshape(-1, 1)
+
+        lr.fit(X, y)
 
         d = lr.coef_[0][0]  # extract slope
+        self.R2 = lr.score(X, y)
 
         return (
             d,
-            np.log(mu).reshape(-1, 1),
-            -np.log(1 - Femp).reshape(-1, 1),
+            X,
+            y
         )
